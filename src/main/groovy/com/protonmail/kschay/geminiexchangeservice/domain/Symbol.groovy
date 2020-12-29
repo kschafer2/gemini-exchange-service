@@ -1,0 +1,31 @@
+package com.protonmail.kschay.geminiexchangeservice.domain
+
+enum Symbol {
+    BTCUSD,
+    ETHUSD,
+    ETHBTC,
+    ZECUSD,
+    ZECBTC,
+    ZECETH,
+    ZECBCH,
+    ZECLTC,
+    BCHUSD,
+    BCHBTC,
+    BCHETH,
+    LTCUSD,
+    LTCBTC,
+    LTCETH,
+    LTCBCH,
+    BATUSD,
+    DAIUSD,
+    OXTUSD,
+    BATBTC,
+    DAIBTC,
+    LINKBTC,
+    OXTBTC,
+    BATETH,
+    DAIETH,
+    LINKETH,
+    OXTETH,
+    LINKUSD
+}
