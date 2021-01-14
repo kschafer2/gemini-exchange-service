@@ -4,6 +4,8 @@ class Payload {
     String request
     String nonce = System.currentTimeMillis().toString()
 
+    Payload(){}
+
     Payload(final String request) {
         this.request = request
     }

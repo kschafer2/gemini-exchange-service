@@ -9,6 +9,8 @@ class PlaceOrderPayload extends Payload {
     String type
     Object[] options
 
+    PlaceOrderPayload(){}
+
     PlaceOrderPayload(ExecuteOrder executeOrder) {
         super(GeminiEndpoints.NEW_ORDER.uri())
 
