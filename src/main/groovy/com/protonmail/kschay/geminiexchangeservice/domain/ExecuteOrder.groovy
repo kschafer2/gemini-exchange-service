@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 import java.math.RoundingMode
 
-import static com.protonmail.kschay.geminiexchangeservice.Converter.toBigDecimal
+import static Converter.toBigDecimal
 import static com.protonmail.kschay.geminiexchangeservice.domain.Side.BUY
 
 @JsonIgnoreProperties(ignoreUnknown = true)

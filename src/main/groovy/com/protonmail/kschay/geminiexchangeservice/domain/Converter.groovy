@@ -1,4 +1,4 @@
-package com.protonmail.kschay.geminiexchangeservice
+package com.protonmail.kschay.geminiexchangeservice.domain
 
 import java.text.DecimalFormat
 import java.text.ParseException
