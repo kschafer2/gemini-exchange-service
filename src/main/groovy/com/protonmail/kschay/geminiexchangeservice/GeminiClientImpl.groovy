@@ -12,11 +12,8 @@ import static com.protonmail.kschay.geminiexchangeservice.domain.GeminiEndpoints
 @Component
 class GeminiClientImpl extends GeminiPrivateClient implements GeminiClient {
 
-    GeminiClientImpl(GeminiProperties geminiProperties,
-                     WebClient webClient,
-                     ObjectMapper objectMapper,
-                     Mac mac) {
-        super(geminiProperties, webClient, objectMapper, mac)
+    GeminiClientImpl(ObjectMapper objectMapper, Mac mac, GeminiProperties geminiProperties, WebClient webClient) {
+        super(objectMapper, mac, geminiProperties, webClient)
     }
 
     @Override

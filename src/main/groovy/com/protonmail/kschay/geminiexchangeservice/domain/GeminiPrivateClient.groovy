@@ -1,6 +1,8 @@
-package com.protonmail.kschay.geminiexchangeservice
+package com.protonmail.kschay.geminiexchangeservice.domain
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.protonmail.kschay.geminiexchangeservice.GeminiProperties
+import com.protonmail.kschay.geminiexchangeservice.domain.Logging
 import com.protonmail.kschay.geminiexchangeservice.domain.Payload
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.codec.Hex
@@ -11,26 +13,48 @@ import reactor.util.retry.Retry
 import javax.crypto.Mac
 import java.util.stream.Collectors
 
-abstract class GeminiPrivateClient extends GeminiPublicClient {
+abstract class GeminiPrivateClient extends Logging {
 
     private final Mac mac
+    private final GeminiProperties geminiProperties
+    private final WebClient webClient
 
-    GeminiPrivateClient(GeminiProperties geminiProperties,
-                        WebClient webClient,
-                        ObjectMapper objectMapper,
-                        Mac mac) {
-        super(geminiProperties, webClient, objectMapper)
+    GeminiPrivateClient(ObjectMapper objectMapper, Mac mac, GeminiProperties geminiProperties, WebClient webClient) {
+        super(objectMapper)
         this.mac = mac
+        this.geminiProperties = geminiProperties
+        this.webClient = webClient
     }
 
-    protected def postForMono(final Payload payload, final Class clazz) {
-        def response = post(payload)
+    protected def getForMono(final String uri, final Class clazz) {
+        def response = get(uri)
                 .bodyToMono(clazz)
                 .retryWhen(Retry.indefinitely())
                 .doOnError(RuntimeException.class, { e -> log.error(e.getMessage())})
                 .block()
 
-        log.info("Response " + clazz.getSimpleName() + ": " + objectMapper.writeValueAsString(response))
+        log.info("Response " + clazz.getSimpleName() + ": " + writeValueAsString(response))
+        return response
+    }
+
+    private WebClient.ResponseSpec get(final String uri) {
+        Thread.sleep(1000)
+
+        log.info("Request: " + uri)
+
+        return webClient.get()
+                .uri(geminiProperties.baseUrl + uri)
+                .retrieve()
+    }
+
+    protected def postForMono(final Payload payload, final Class clazz) {
+        def response = post(payload)
+                .bodyToMono(clazz)
+//                .retryWhen(Retry.indefinitely())
+//                .doOnError(RuntimeException.class, { e -> log.error(e.getMessage())})
+                .block()
+
+        log.info("Response " + clazz.getSimpleName() + ": " + writeValueAsString(response))
         return response
     }
 
@@ -42,17 +66,17 @@ abstract class GeminiPrivateClient extends GeminiPublicClient {
                 .toStream()
                 .collect(Collectors.toList())
 
-        log.info("Response " + clazz.getSimpleName() + ": " + objectMapper.writeValueAsString(response))
+        log.info("Response " + clazz.getSimpleName() + ": " + writeValueAsString(response))
         return response
     }
 
     private WebClient.ResponseSpec post(final Payload payload) {
         Thread.sleep(1000)
 
-        log.info("Request: " + objectMapper.writeValueAsString(payload))
+        log.info("Request: " + writeValueAsString(payload))
 
         try {
-            final def b64payload = Base64.encoder.encodeToString(objectMapper.writeValueAsString(payload).getBytes())
+            final def b64payload = Base64.encoder.encodeToString(writeValueAsString(payload).getBytes())
             final def signature = buildSignature(b64payload)
 
             return webClient.post()
